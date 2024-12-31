@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字位数练习</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-width: 300px;
+        }
+        #number {
+            font-size: 48px;
+            margin: 20px 0;
+            color: #333;
+            cursor: pointer;
+        }
+        #answer {
+            font-size: 36px;
+            margin: 20px 0;
+            color: #2196F3;
+            min-height: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        .instruction {
+            margin: 20px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="instruction">观察数字，按空格键或点击按钮显示最大位数</div>
+        <div id="number"></div>
+        <button id="actionButton" onclick="handleButtonClick()">揭晓</button>
+        <div id="answer"></div>
+    </div>
+
+    <script>
+        let currentNumber = 0;
+        let isAnswerShown = false;
+
+        function addCommas(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function generateNumber() {
+            // 随机决定位数（4到8位数，即千位到千万位）
+            const digits = Math.floor(Math.random() * 5) + 4;
+            const minNum = Math.pow(10, digits - 1);
+            const maxNum = Math.pow(10, digits) - 1;
+            
+            // 在确定的位数范围内生成随机数
+            currentNumber = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            
+            // 50%的概率添加逗号
+            const displayNumber = Math.random() < 0.5 ? addCommas(currentNumber) : currentNumber;
+            document.getElementById('number').textContent = displayNumber;
+            document.getElementById('answer').textContent = '';
+            document.getElementById('actionButton').textContent = '揭晓';
+            isAnswerShown = false;
+        }
+
+        function showAnswer() {
+            let digit = '';
+            if (currentNumber >= 10000000) {
+                digit = '千万';
+            } else if (currentNumber >= 1000000) {
+                digit = '百万';
+            } else if (currentNumber >= 100000) {
+                digit = '十万';
+            } else if (currentNumber >= 10000) {
+                digit = '万';
+            } else {
+                digit = '千';
+            }
+            document.getElementById('answer').textContent = digit;
+            document.getElementById('actionButton').textContent = '下一组';
+            isAnswerShown = true;
+        }
+
+        function handleButtonClick() {
+            if (!isAnswerShown) {
+                showAnswer();
+            } else {
+                generateNumber();
+            }
+        }
+
+        // 添加空格键响应
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                event.preventDefault(); // 防止页面滚动
+                handleButtonClick();
+            }
+        });
+
+        // 点击数字时生成新的数字
+        document.getElementById('number').addEventListener('click', generateNumber);
+
+        // 页面加载时生成第一个数字
+        generateNumber();
+    </script>
+</body>
+</html>
